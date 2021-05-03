@@ -1,0 +1,1 @@
+sequelize model:generate --name userCreatedSample --attributes name:string,description:string,file:string,userId:integer

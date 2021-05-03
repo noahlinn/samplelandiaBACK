@@ -54,4 +54,42 @@ userController.verify = async (req, res) => {
     }
 }
 
+userController.getUserInfo = async (req, res) => {
+    try{
+        // const encryptedId = req.headers.authorization
+        // const decryptedId = await jwt.verify(encryptedId, process.env.JWT_SECRET)
+        const user = await models.user.findOne({
+            where: {
+                id: req.headers.authorization
+            }
+        })
+       
+        res.json({
+            user: user
+        })    
+    }
+    catch (error) {
+        res.json({
+            error
+        })
+    }
+}
+
+userController.getSamples = async (req, res) => {
+    try {
+        const user = await models.user.findOne({
+            where:{
+                id: req.headers.authorization
+            }
+        })
+        const samples = await user.getUserCreatedSamples()
+        res.send(samples)
+    } catch (error) {
+        
+    }
+}
+
 module.exports = userController
+
+
+
