@@ -1,14 +1,23 @@
+require('dotenv').config()
 const models = require('../models')
 const userController = {}
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 userController.create = async (req,res) => {
     try {
+        const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+
         const newUser = await models.user.create({
             name: req.body.name,
             email: req.body.email,
-            password: req.body.password
+            password: hashedPassword
         })
-        res.json({newUser})
+        
+        const encryptedId = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET)
+        console.log(res.data)
+        // res.json({message: 'Signed up', userId: encryptedId, userName: newUser.name, userEmail: newUser.email})
+        res.json({encryptedId, newUser})
     } catch (error) {
         res.status(400).json({ error: error.message })
         console.log(error)
@@ -22,8 +31,10 @@ userController.login = async (req,res) => {
                 email: req.body.email
             }
         })
-        if (user && user.password === req.body.password){
-            res.json({message: 'success', user: user})
+        if (bcrypt.compareSync(req.body.password, user.password)){
+            const encryptedId = jwt.sign({ userId: user.id }, process.env.JWT_SECRET)
+            // res.json({message: 'login successful', userId: encryptedId, userName: user.name, userEmail: user.email})
+            res.json({user, encryptedId})
         }
         else{
             res.status(401).json({message: 'login failed'})
@@ -36,9 +47,12 @@ userController.login = async (req,res) => {
 
 userController.verify = async (req, res) => {
     try {
+        const encryptedId = req.headers.authorization
+        const decryptedId = await jwt.verify(encryptedId, process.env.JWT_SECRET)
+        
         const user = await models.user.findOne({
             where:{
-                id: req.headers.authorization
+                id: decryptedId.userId
             }
         })
         if(user){
@@ -56,11 +70,11 @@ userController.verify = async (req, res) => {
 
 userController.getUserInfo = async (req, res) => {
     try{
-        // const encryptedId = req.headers.authorization
-        // const decryptedId = await jwt.verify(encryptedId, process.env.JWT_SECRET)
+        const encryptedId = req.headers.authorization
+        const decryptedId = await jwt.verify(encryptedId, process.env.JWT_SECRET)
         const user = await models.user.findOne({
             where: {
-                id: req.headers.authorization
+                id: decryptedId.userId
             }
         })
        

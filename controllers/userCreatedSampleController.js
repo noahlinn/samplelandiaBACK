@@ -1,11 +1,17 @@
+require('dotenv').config()
 const models = require('../models')
 const Sequelize = require('sequelize');
+const jwt = require('jsonwebtoken')
+
+
 const Op = Sequelize.Op;
 
 userCreatedSampleController = {}
 
 userCreatedSampleController.create = async (req, res) => {
     try {
+        const encryptedId = req.headers.authorization
+        const decryptedId = await jwt.verify(encryptedId, process.env.JWT_SECRET)
         const [sample, create] = await models.userCreatedSample.findOrCreate({
             where: {
                 name: req.body.name,
@@ -15,9 +21,10 @@ userCreatedSampleController.create = async (req, res) => {
         })
         let user = await models.user.findOne({
             where: {
-                id: req.headers.authorization
+                id: decryptedId.userId
             }
         })
+        console.log(user)
         await user.addUserCreatedSample(sample)
         res.send(sample)
     } catch (error) {

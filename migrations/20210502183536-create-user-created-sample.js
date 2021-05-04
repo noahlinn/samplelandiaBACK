@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       file: {
-        type: Sequelize.STRING(1000000)
+        type: Sequelize.TEXT
       },
       userId: {
         type: Sequelize.INTEGER
