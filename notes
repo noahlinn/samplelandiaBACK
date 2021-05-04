@@ -1,1 +1,2 @@
-sequelize model:generate --name userCreatedSample --attributes name:string,description:string,file:string,userId:integer
+sequelize model:generate --name user_join_sample --attributes userId:text,savedSampleId:text
+sequelize model:generate --name savedSample --attributes sampleId:string

@@ -1,25 +1,18 @@
 'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('userCreatedSamples', {
+    await queryInterface.createTable('savedSamples', {
       id: {
-        type: Sequelize.DataTypes.UUID,
-        defaultValue: Sequelize.literal('uuid_generate_v4()'),
         allowNull: false,
-        primaryKey: true
-      },
-      name: {
-        type: Sequelize.STRING
-      },
-      description: {
-        type: Sequelize.STRING
-      },
-      file: {
-        type: Sequelize.STRING(1000000)
-      },
-      userId: {
+        autoIncrement: true,
+        primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      sampleId: {
+        type: Sequelize.STRING
+      },
+      sampleName:{
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -32,6 +25,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('userCreatedSamples');
+    await queryInterface.dropTable('savedSamples');
   }
 };

@@ -1,7 +1,7 @@
 const { default: axios } = require('axios')
 // const models = require('../models')
 const sampleController = {}
-const apiKey = 'nAtLaYjGvJ7EOKLR4d4hnswp0KVSFpAsE8TugBoH'
+const apiKey = '3mAFq8gssuJI8PXUTuDnEJMozyndS2K8Tyyaol44'
 const api = ''
 // sampleController.getAll = async (req, res) => {
 //     try {

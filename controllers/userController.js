@@ -89,6 +89,65 @@ userController.getSamples = async (req, res) => {
     }
 }
 
+userController.saveSample = async (req, res) => {
+    try {
+        let [sample, create] = await models.savedSample.findOrCreate({
+            where: {
+                sampleId: req.body.sampleId,
+                sampleName: req.body.sampleName
+            }
+        })
+        console.log(sample)
+        
+        const user = await models.user.findOne({
+            where:{
+                id: req.headers.authorization
+            }
+        })
+        console.log(user)
+        await user.addSavedSample(sample)
+        
+        res.send({user, sample})
+    } catch (error) {
+        res.send(error)
+    }
+}
+
+userController.getSaved = async (req, res) => {
+    try {
+        const user = await models.user.findOne({
+            where:{
+                id: req.headers.authorization
+            }
+        })
+        const favoirteSample = await user.getSavedSamples()
+        res.send({favoirteSample})
+    } catch (error) {
+        res.send(error)
+    }
+}
+
+userController.deleteSave = async (req, res) => {
+    try {
+        let sample = await models.savedSample.findOne({
+            where:{
+                sampleId: req.params.sampleId
+            }
+        })
+        const user = await models.user.findOne({
+            where:{
+                id: req.headers.authorization
+            }
+        })
+        console.log(user)
+        await user.removeSavedSample(sample)
+        res.send(sample)
+    } catch (error) {
+        res.send(error)
+    }
+}
+
+
 module.exports = userController
 
 
